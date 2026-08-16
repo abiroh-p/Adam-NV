@@ -5,3 +5,5 @@ __pycache__/
 .venv/
 test_outputs/
 e1_convergence/src/data/
+soffice_profile_*/
+soffice_convert_*/
