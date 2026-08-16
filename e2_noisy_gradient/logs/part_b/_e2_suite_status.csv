@@ -1,0 +1,5 @@
+optimizer,sigma,seed,status,elapsed_sec,error
+adam_nv,2.0,0,success,3719.7,
+adam_nv,2.0,1,success,3697.5,
+adam,2.0,0,success,3125.0,
+adam,2.0,1,success,3117.9,

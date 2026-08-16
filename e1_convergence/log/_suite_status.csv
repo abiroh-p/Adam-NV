@@ -1,0 +1,3 @@
+optimizer,seed,status,elapsed_sec,error
+adam,0,success,2745.9,
+adam,1,success,2717.6,

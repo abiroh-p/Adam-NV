@@ -1,0 +1,10 @@
+# Training
+torch>=2.2,<3
+torchvision>=0.17,<1
+adabelief-pytorch==0.2.1
+
+# Analysis and figures
+numpy>=1.24,<3
+pandas>=2.0,<3
+scipy>=1.10,<2
+matplotlib>=3.7,<4

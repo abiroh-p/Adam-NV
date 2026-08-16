@@ -1,0 +1,8 @@
+optimizer,schedule,sigma_max,seed,status,elapsed_sec,error
+adam,intermittent,2.0,4,success,2867.3,
+adam,intermittent,2.0,5,success,2861.8,
+adam,intermittent,2.0,6,success,2866.6,
+adam,intermittent,2.0,7,success,2870.0,
+adam_nv,intermittent,2.0,4,success,3257.6,
+adam_nv,intermittent,2.0,5,success,3248.8,
+adam_nv,intermittent,2.0,6,success,3239.0,

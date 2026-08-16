@@ -1,0 +1,7 @@
+e2_noisy_gradient/data/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+test_outputs/
+e1_convergence/src/data/

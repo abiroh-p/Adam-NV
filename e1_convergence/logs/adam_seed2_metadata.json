@@ -1,0 +1,42 @@
+{
+  "arguments": {
+    "batch_size": 128,
+    "data_dir": "./data",
+    "deterministic": true,
+    "epochs": 60,
+    "log_dir": "../logs",
+    "lr": null,
+    "optimizer": "adam",
+    "seed": 2,
+    "smoke_test": false,
+    "synthetic_data": false
+  },
+  "command": [
+    "/usr/bin/python3",
+    "train_resnet.py",
+    "--optimizer",
+    "adam",
+    "--seed",
+    "2",
+    "--epochs",
+    "60",
+    "--batch-size",
+    "128",
+    "--data-dir",
+    "./data",
+    "--log-dir",
+    "../logs",
+    "--deterministic"
+  ],
+  "cuda_available": true,
+  "cuda_runtime": "12.8",
+  "gpu_devices": [
+    "Tesla T4"
+  ],
+  "hostname": "b0ab646b50c5",
+  "platform": "Linux-6.6.122+-x86_64-with-glibc2.35",
+  "python_version": "3.12.13",
+  "script_version": "e1_train_resnet",
+  "torch_version": "2.11.0+cu128",
+  "torchvision_version": "0.26.0+cu128"
+}
