@@ -1,7 +1,0 @@
-optimizer,seed,status,elapsed_sec,error
-adam,2,skipped,0,
-adam,3,skipped,0,
-adamw,2,skipped,0,
-adamw,3,skipped,0,
-adabelief,2,skipped,0,
-adabelief,3,FAILED,31.7,exit code 1

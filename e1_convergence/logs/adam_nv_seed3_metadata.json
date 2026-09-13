@@ -1,0 +1,43 @@
+{
+  "arguments": {
+    "batch_size": 128,
+    "data_dir": "/kaggle/input/datasets/abiroh101/adammm/Adam-NV/e1_convergence/src/data",
+    "deterministic": true,
+    "epochs": 60,
+    "log_dir": "/kaggle/working/log",
+    "lr": null,
+    "optimizer": "adam_nv",
+    "seed": 3,
+    "smoke_test": false,
+    "synthetic_data": false
+  },
+  "command": [
+    "/usr/bin/python3",
+    "train_resnet.py",
+    "--optimizer",
+    "adam_nv",
+    "--seed",
+    "3",
+    "--epochs",
+    "60",
+    "--batch-size",
+    "128",
+    "--data-dir",
+    "/kaggle/input/datasets/abiroh101/adammm/Adam-NV/e1_convergence/src/data",
+    "--log-dir",
+    "/kaggle/working/log",
+    "--deterministic"
+  ],
+  "cuda_available": true,
+  "cuda_runtime": "12.8",
+  "gpu_devices": [
+    "Tesla T4",
+    "Tesla T4"
+  ],
+  "hostname": "2bb06ab0a588",
+  "platform": "Linux-6.12.90+-x86_64-with-glibc2.35",
+  "python_version": "3.12.13",
+  "script_version": "e1_train_resnet",
+  "torch_version": "2.10.0+cu128",
+  "torchvision_version": "0.25.0+cu128"
+}
