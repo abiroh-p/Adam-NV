@@ -1,0 +1,11 @@
+[E1] optimizer=adam_nv seed=4 epochs=60 lr=0.001 device=cuda smoke_test=False
+[E1] Metadata: /kaggle/working/Adam-NV/logs/adam_nv_seed4_metadata.json
+/usr/local/lib/python3.12/dist-packages/torch/utils/_contextlib.py:124: RuntimeWarning: Adam-NV: P (running product of beta_1) is approaching the underflow floor. This is expected with low beta_min over many steps. Bias correction is clamped and stable.
+  return func(*args, **kwargs)
+[adam_nv_seed4] epoch   1/60 | train_loss=1.3824 train_acc=0.4945 | val_loss=1.1010 val_acc=0.6120 | 48.3s/epoch
+[adam_nv_seed4] epoch   2/60 | train_loss=0.8715 train_acc=0.6910 | val_loss=0.9447 val_acc=0.6945 | 50.9s/epoch
+[adam_nv_seed4] epoch   3/60 | train_loss=0.6690 train_acc=0.7665 | val_loss=0.6338 val_acc=0.7836 | 51.0s/epoch
+[adam_nv_seed4] epoch   4/60 | train_loss=0.5533 train_acc=0.8092 | val_loss=0.5812 val_acc=0.8041 | 51.4s/epoch
+[adam_nv_seed4] epoch   5/60 | train_loss=0.4850 train_acc=0.8324 | val_loss=0.6509 val_acc=0.7879 | 51.0s/epoch
+[adam_nv_seed4] epoch   6/60 | train_loss=0.4351 train_acc=0.8497 | val_loss=0.5366 val_acc=0.8280 | 51.4s/epoch
+[adam_nv_seed4] epoch   7/60 | train_loss=0.3869 train_acc=0.8666 | val_loss=0.4478 val_acc=0.8550 | 51.1s/epoch

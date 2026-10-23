@@ -1,0 +1,168 @@
+diff --git a/e1_convergence/src/experiment_metadata.py b/e1_convergence/src/experiment_metadata.py
+index 3833e11..ec878b0 100644
+--- a/e1_convergence/src/experiment_metadata.py
++++ b/e1_convergence/src/experiment_metadata.py
+@@ -1,5 +1,6 @@
+ """Runtime metadata sidecars for reproducible E1 experiment logs."""
+ 
++import hashlib
+ import json
+ import platform
+ from pathlib import Path
+@@ -10,6 +11,16 @@ import torch
+ import torchvision
+ 
+ 
++_HASHED_FILES = ("train_resnet.py", "adam_nv.py", "gono.py", "experiment_metadata.py")
++
++
++def _code_hashes() -> dict:
++    """SHA-256 of the source files that define a run's behaviour."""
++    here = Path(__file__).resolve().parent
++    return {name: hashlib.sha256((here / name).read_bytes()).hexdigest()
++            for name in _HASHED_FILES if (here / name).exists()}
++
++
+ def write_metadata(csv_path: str, arguments: dict, script_version: str) -> str:
+     path = Path(csv_path).with_name(Path(csv_path).stem + "_metadata.json")
+     payload = {
+@@ -25,6 +36,7 @@ def write_metadata(csv_path: str, arguments: dict, script_version: str) -> str:
+             torch.cuda.get_device_name(i) for i in range(torch.cuda.device_count())],
+         "platform": platform.platform(),
+         "hostname": socket.gethostname(),
++        "code_sha256": _code_hashes(),
+     }
+     path.write_text(json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8")
+     return str(path)
+diff --git a/e1_convergence/src/run_e1_suite.py b/e1_convergence/src/run_e1_suite.py
+index 0d4e7e7..76752eb 100644
+--- a/e1_convergence/src/run_e1_suite.py
++++ b/e1_convergence/src/run_e1_suite.py
+@@ -47,6 +47,11 @@ def main():
+                          help="Skip a (optimizer, seed) combo if its log CSV "
+                               "already exists — useful for resuming after a "
+                               "crashed or interrupted session.")
++    parser.add_argument("--status-file", type=str, default="_suite_status.csv",
++                         help="Name of the per-invocation status CSV written inside "
++                              "--log-dir. The default is OVERWRITTEN by every "
++                              "invocation, so give concurrent or follow-up "
++                              "invocations distinct names.")
+     parser.add_argument("--optimizers", nargs="+", default=OPTIMIZERS,
+                          help=f"Subset of optimizers to run. Default: {OPTIMIZERS}")
+     parser.add_argument("--seeds", nargs="+", type=int, default=SEEDS,
+@@ -59,7 +64,7 @@ def main():
+           f"smoke_test={args.smoke_test} synthetic_data={args.synthetic_data}")
+ 
+     os.makedirs(args.log_dir, exist_ok=True)
+-    suite_log_path = os.path.join(args.log_dir, "_suite_status.csv")
++    suite_log_path = os.path.join(args.log_dir, args.status_file)
+     suite_rows = []
+ 
+     suite_start = time.time()
+@@ -122,6 +127,14 @@ def main():
+             writer.writeheader()
+             writer.writerows(suite_rows)
+ 
++    # Final write: when every combination was skipped the in-loop write above
++    # never runs, which would leave no status file for this invocation.
++    with open(suite_log_path, "w", newline="") as f:
++        writer = csv.DictWriter(f, fieldnames=["optimizer", "seed", "status",
++                                                 "elapsed_sec", "error"])
++        writer.writeheader()
++        writer.writerows(suite_rows)
++
+     total_elapsed = time.time() - suite_start
+     n_success = sum(1 for r in suite_rows if r["status"] == "success")
+     n_failed = sum(1 for r in suite_rows if r["status"] == "FAILED")
+diff --git a/e1_convergence/src/train_resnet.py b/e1_convergence/src/train_resnet.py
+index fb49798..ed37db3 100644
+--- a/e1_convergence/src/train_resnet.py
++++ b/e1_convergence/src/train_resnet.py
+@@ -11,6 +11,7 @@ Usage:
+     python train_resnet.py --optimizer adam     --seed 0 --epochs 60
+     python train_resnet.py --optimizer adamw    --seed 0 --epochs 60
+     python train_resnet.py --optimizer adabelief --seed 0 --epochs 60
++    python train_resnet.py --optimizer gono --seed 0 --epochs 60   # Protocol v2 baseline
+ 
+ Quick smoke test (tiny, CPU-friendly, ~1 minute):
+     python train_resnet.py --optimizer adam_nv --seed 0 --epochs 1 \
+@@ -28,6 +29,7 @@ import torchvision
+ import torchvision.transforms as transforms
+ 
+ from adam_nv import AdamNV
++from gono import GONO
+ from experiment_metadata import write_metadata
+ 
+ # ──────────────────────────────────────────────────────────────────────────
+@@ -40,6 +42,15 @@ def build_optimizer(name, params, lr):
+     name = name.lower()
+     if name == "adam_nv":
+         return AdamNV(params, lr=lr)
++    elif name == "gono":
++        # Protocol v2 baseline (arXiv:2605.06575). Per-tensor cosine, i.e. the
++        # scope used by the authors' released code. Hyperparameters are the
++        # GONO paper defaults: lam=0.4, beta1 in [0.5, 0.99], beta1_base=0.9.
++        return GONO(params, lr=lr, cosine_scope="tensor")
++    elif name == "gono_global":
++        # Same optimizer with ONE cosine over the whole gradient vector
++        # (literal reading of the paper's Algorithm 1). Ablation only.
++        return GONO(params, lr=lr, cosine_scope="global")
+     elif name == "adam":
+         return torch.optim.Adam(params, lr=lr, betas=(0.9, 0.999), eps=1e-8)
+     elif name == "adamw":
+@@ -66,6 +77,8 @@ DEFAULT_LR = {
+     "adam":      1e-3,
+     "adamw":     1e-3,
+     "adabelief": 1e-3,
++    "gono":        1e-3,
++    "gono_global": 1e-3,
+ }
+ 
+ 
+@@ -155,7 +168,7 @@ def evaluate(model, loader, loss_fn, device):
+ def main():
+     parser = argparse.ArgumentParser(description="E1 Convergence Benchmark — single run")
+     parser.add_argument("--optimizer", required=True,
+-                         choices=["adam_nv", "adam", "adamw", "adabelief"])
++                         choices=["adam_nv", "adam", "adamw", "adabelief", "gono", "gono_global"])
+     parser.add_argument("--seed", type=int, required=True)
+     parser.add_argument("--epochs", type=int, default=60)
+     parser.add_argument("--batch-size", type=int, default=128)
+@@ -207,16 +220,22 @@ def main():
+     os.makedirs(args.log_dir, exist_ok=True)
+     run_name = f"{args.optimizer}_seed{args.seed}" + ("_smoke" if args.smoke_test else "")
+     log_path = os.path.join(args.log_dir, f"{run_name}.csv")
+-    metadata_path = write_metadata(log_path, vars(args), "e1_train_resnet")
++    metadata_path = write_metadata(log_path, vars(args), "e1_train_resnet_v2")
+     print(f"[E1] Metadata: {metadata_path}")
+ 
+     is_adam_nv = args.optimizer == "adam_nv"
++    is_gono = args.optimizer in ("gono", "gono_global")
+     fieldnames = ["epoch", "train_loss", "train_acc", "val_loss", "val_acc",
+                   "lr", "epoch_time_sec"]
+     if is_adam_nv:
+         fieldnames += ["beta1_mean", "beta1_min", "beta1_max",
+                         "sigma2_mean", "sigma2_min", "sigma2_max",
+                         "P_mean", "P_min", "P_max"]
++    if is_gono:
++        # beta1_* / cc_* are statistics over parameter TENSORS (one scalar
++        # per tensor in "tensor" scope), not over elements as for Adam-NV.
++        fieldnames += ["beta1_mean", "beta1_min", "beta1_max",
++                        "cc_mean", "cc_min", "cc_max"]
+ 
+     reached_90 = None  # epoch at which val_acc first reaches 90% (CIFAR-10)
+ 
+@@ -272,6 +291,13 @@ def main():
+                     "sigma2_mean": s_mean, "sigma2_min": s_min, "sigma2_max": s_max,
+                     "P_mean": p_mean, "P_min": p_min, "P_max": p_max,
+                 })
++            if is_gono:
++                b_mean, b_min, b_max = optimizer.get_beta1_stats()
++                c_mean, c_min, c_max = optimizer.get_cc_stats()
++                row.update({
++                    "beta1_mean": b_mean, "beta1_min": b_min, "beta1_max": b_max,
++                    "cc_mean": c_mean, "cc_min": c_min, "cc_max": c_max,
++                })
+ 
+             writer.writerow(row)
+             f.flush()

@@ -47,6 +47,15 @@ def main():
                          help="Skip a (optimizer, seed) combo if its log CSV "
                               "already exists — useful for resuming after a "
                               "crashed or interrupted session.")
+    parser.add_argument("--lr", type=float, default=None,
+                        help="Override the learning rate (default: per-optimizer default).")
+    parser.add_argument("--run-tag", type=str, default="",
+                        help="Suffix for run/file names, e.g. _lr3e-4 (use with --lr).")
+    parser.add_argument("--status-file", type=str, default="_suite_status.csv",
+                         help="Name of the per-invocation status CSV written inside "
+                              "--log-dir. The default is OVERWRITTEN by every "
+                              "invocation, so give concurrent or follow-up "
+                              "invocations distinct names.")
     parser.add_argument("--optimizers", nargs="+", default=OPTIMIZERS,
                          help=f"Subset of optimizers to run. Default: {OPTIMIZERS}")
     parser.add_argument("--seeds", nargs="+", type=int, default=SEEDS,
@@ -59,13 +68,13 @@ def main():
           f"smoke_test={args.smoke_test} synthetic_data={args.synthetic_data}")
 
     os.makedirs(args.log_dir, exist_ok=True)
-    suite_log_path = os.path.join(args.log_dir, "_suite_status.csv")
+    suite_log_path = os.path.join(args.log_dir, args.status_file)
     suite_rows = []
 
     suite_start = time.time()
 
     for i, (opt, seed) in enumerate(combos, start=1):
-        run_name = f"{opt}_seed{seed}" + ("_smoke" if args.smoke_test else "")
+        run_name = f"{opt}{args.run_tag}_seed{seed}" + ("_smoke" if args.smoke_test else "")
         log_path = os.path.join(args.log_dir, f"{run_name}.csv")
 
         if args.skip_existing and os.path.exists(log_path):
@@ -92,6 +101,10 @@ def main():
             "--data-dir", args.data_dir,
             "--log-dir", args.log_dir,
         ]
+        if args.lr is not None:
+            cmd += ["--lr", str(args.lr)]
+        if args.run_tag:
+            cmd += ["--run-tag", args.run_tag]
         if args.smoke_test:
             cmd.append("--smoke-test")
         if args.synthetic_data:
@@ -121,6 +134,14 @@ def main():
                                                      "elapsed_sec", "error"])
             writer.writeheader()
             writer.writerows(suite_rows)
+
+    # Final write: when every combination was skipped the in-loop write above
+    # never runs, which would leave no status file for this invocation.
+    with open(suite_log_path, "w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=["optimizer", "seed", "status",
+                                                 "elapsed_sec", "error"])
+        writer.writeheader()
+        writer.writerows(suite_rows)
 
     total_elapsed = time.time() - suite_start
     n_success = sum(1 for r in suite_rows if r["status"] == "success")

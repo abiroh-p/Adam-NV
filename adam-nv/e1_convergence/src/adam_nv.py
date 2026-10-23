@@ -17,6 +17,20 @@ Changes from v1:
             P_t = beta_base^t recovers standard bias correction (1 - beta_1^t).
     [FIX 4] Explicit comment that sigma^2 uses moments from t-1 (intentional).
     [FIX 5] Per-element nature of beta_1 is explicitly documented.
+    [FIX 6] Added optional decoupled v_noise: the Phase 1.6 beta_2 sweep
+            (see project report, Section 5) found that beta_2 controls two
+            things at once when v is shared between the noise estimator and
+            the parameter update -- how fast the noise signal tracks a real
+            change in gradient statistics, AND how much the update's own
+            step-size denominator is smoothed. Shrinking beta_2 fixed a
+            deficit under fast noise oscillation (intermittent schedule) but
+            introduced a NEW deficit under slow, smooth noise drift (ramp-up)
+            that was not there before -- a trade-off, not a free fix. Setting
+            beta_2_noise (default None) gives the noise estimator its own v
+            buffer with its own decay, so noise-tracking speed can be tuned
+            without touching the update's step-size normalization at all.
+            Default (None) reproduces every prior Adam-NV result exactly --
+            this is strictly additive, not a behavior change.
 """
 
 import math
@@ -53,9 +67,29 @@ class AdamNV(Optimizer):
         lr           : Learning rate (eta). Default: 1e-3.
         beta_base    : Maximum beta_1 (used when noise is zero). Default: 0.9.
         beta_min     : Minimum beta_1 (floor for stability). Default: 0.1.
-        beta_2       : Fixed second-moment decay. Default: 0.999.
+        beta_2       : Fixed second-moment decay, used for the parameter
+                       update's own step-size denominator (v_hat). Default: 0.999.
+        beta_2_noise : Optional, separate second-moment decay used ONLY for
+                       the noise estimator's v buffer (v_noise), isolated
+                       from the parameter update. Default: None, meaning
+                       v_noise = v (the original, coupled behavior --
+                       exactly reproduces every prior Adam-NV result). Set
+                       this to decouple noise-tracking speed from the
+                       update's step-size normalization; see FIX 6 above.
         gamma        : Noise sensitivity. gamma=0 → reduces exactly to Adam.
                        Default: 1.0.
+        response_mode: `distrust` preserves the original rule (higher score
+                       lowers beta_1). `smooth` tests the alternative momentum
+                       hypothesis (higher score raises beta_1 from beta_base
+                       toward beta_max). Default: `distrust`.
+        beta_max     : Upper beta_1 limit used only by response_mode=`smooth`.
+                       Default: 0.999.
+        bias_correction : `running_product` (default) divides m by (1 - P_t),
+                       the exact normalizer under a time-varying beta_1.
+                       `base` divides by (1 - beta_base^t), the standard Adam
+                       normalizer, which ignores the realized beta_1 values.
+                       `base` exists ONLY as an ablation (Protocol v2, Exp. 3);
+                       every reported Adam-NV result uses the default.
         alpha        : EMA smoothing for noise signal rho. Default: 0.95.
         k            : Warm-up suppression constant. Default: 100.
         lam          : Denominator stabilizer (lambda). Default: 0.1.
@@ -64,16 +98,26 @@ class AdamNV(Optimizer):
     """
 
     def __init__(self, params, lr=1e-3, beta_base=0.9, beta_min=0.1,
-                 beta_2=0.999, gamma=1.0, alpha=0.95, k=100,
-                 lam=0.1, eps=1e-8, weight_decay=0.0):
+                 beta_2=0.999, beta_2_noise=None, gamma=1.0, alpha=0.95, k=100,
+                 lam=0.1, eps=1e-8, weight_decay=0.0,
+                 response_mode="distrust", beta_max=0.999,
+                 bias_correction="running_product"):
         if not 0.0 <= lr:
             raise ValueError(f"Invalid learning rate: {lr}")
         if not 0.0 <= beta_base <= 1.0:
             raise ValueError(f"Invalid beta_base: {beta_base}")
         if not 0.0 <= beta_min <= beta_base:
             raise ValueError(f"Invalid beta_min: {beta_min} (must be <= beta_base)")
+        if not beta_base <= beta_max < 1.0:
+            raise ValueError(f"Invalid beta_max: {beta_max} (must satisfy beta_base <= beta_max < 1)")
+        if response_mode not in ("distrust", "smooth"):
+            raise ValueError(f"Invalid response_mode: {response_mode}")
+        if bias_correction not in ("running_product", "base"):
+            raise ValueError(f"Invalid bias_correction: {bias_correction}")
         if not 0.0 <= beta_2 < 1.0:
             raise ValueError(f"Invalid beta_2: {beta_2}")
+        if beta_2_noise is not None and not 0.0 <= beta_2_noise < 1.0:
+            raise ValueError(f"Invalid beta_2_noise: {beta_2_noise}")
         if not 0.0 <= alpha < 1.0:
             raise ValueError(f"Invalid alpha: {alpha}")
         if not 0.0 <= eps:
@@ -82,8 +126,10 @@ class AdamNV(Optimizer):
             raise ValueError(f"Invalid lam: {lam}")
 
         defaults = dict(lr=lr, beta_base=beta_base, beta_min=beta_min,
-                        beta_2=beta_2, gamma=gamma, alpha=alpha,
-                        k=k, lam=lam, eps=eps, weight_decay=weight_decay)
+                        beta_2=beta_2, beta_2_noise=beta_2_noise, gamma=gamma,
+                        alpha=alpha, k=k, lam=lam, eps=eps, weight_decay=weight_decay,
+                        response_mode=response_mode, beta_max=beta_max,
+                        bias_correction=bias_correction)
         super().__init__(params, defaults)
 
         # Track whether we've already warned about P underflow (warn once).
@@ -100,12 +146,17 @@ class AdamNV(Optimizer):
             lr        = group['lr']
             beta_base = group['beta_base']
             beta_min  = group['beta_min']
+            beta_max  = group['beta_max']
+            response_mode = group['response_mode']
             beta_2    = group['beta_2']
+            beta_2_noise = group['beta_2_noise']
+            decoupled = beta_2_noise is not None
             gamma     = group['gamma']
             alpha_ema = group['alpha']
             k         = group['k']
             lam       = group['lam']
             eps       = group['eps']
+            bias_correction = group['bias_correction']
             wd        = group['weight_decay']
 
             for p in group['params']:
@@ -128,6 +179,10 @@ class AdamNV(Optimizer):
                     state['v']   = torch.zeros_like(p)  # second moment (per-element)
                     state['rho'] = torch.zeros_like(p)  # smoothed noise (per-element)
                     state['P']   = torch.ones_like(p)   # running product of beta_1 (per-element)
+                    if decoupled:
+                        # FIX 6: separate second-moment buffer dedicated to the
+                        # noise estimator, isolated from the update's v above.
+                        state['v_noise'] = torch.zeros_like(p)
 
                 t   = state['t'] + 1
                 m   = state['m']
@@ -136,16 +191,24 @@ class AdamNV(Optimizer):
                 P   = state['P']
 
                 # ── STEP 1: Gradient Noise Signal ─────────────────────────────
-                # NOTE: m and v here are from step t-1 (intentional).
+                # NOTE: m and v_for_noise here are from step t-1 (intentional).
                 # Using the current gradient to compute the noise signal that
                 # determines how much to trust the current gradient would be
                 # circular; stale moments give a stable, causal estimate.
                 #
-                # sigma^2_t = max(v_{t-1} - m^2_{t-1}, 0) / (v_{t-1} + lam*|m_{t-1}| + eps)
-                # sigma^2 in [0, 1] is a heuristic noise score, not a
-                # calibrated variance or noise-to-signal estimator.
-                numerator   = torch.clamp(v - m.pow(2), min=0.0)
-                denominator = v + lam * m.abs() + eps
+                # FIX 6: v_for_noise is v_noise when decoupled (its own
+                # beta_2_noise-governed buffer), or v itself when not (original
+                # coupled behavior, default). Either way this is the STALE
+                # value from before this step's moment updates (Step 5).
+                #
+                # sigma^2_t = max(v_for_noise_{t-1} - m^2_{t-1}, 0) / (v_for_noise_{t-1} + lam*|m_{t-1}| + eps)
+                # sigma^2 in [0, 1] is a heuristic noise score. Because m and
+                # v_for_noise can use different decay rates and are read before
+                # matching bias corrections, it is not a calibrated variance or
+                # noise-to-signal estimator.
+                v_for_noise = state['v_noise'] if decoupled else v
+                numerator   = torch.clamp(v_for_noise - m.pow(2), min=0.0)
+                denominator = v_for_noise + lam * m.abs() + eps
                 sigma2      = numerator / denominator
 
                 # ── STEP 2: Warm-up Rectification ────────────────────────────
@@ -159,11 +222,17 @@ class AdamNV(Optimizer):
                 rho.mul_(alpha_ema).add_(sigma2_tilde, alpha=(1.0 - alpha_ema))
 
                 # ── STEP 4: Compute Adaptive beta_1 (per-element tensor) ──────
-                # beta_1(t) = beta_min + (beta_base - beta_min) * max(1 - gamma*rho_t, 0)
                 # Each element of each parameter gets its own beta_1 value,
                 # consistent with Adam's per-element second moment v.
-                scale  = torch.clamp(1.0 - gamma * rho, min=0.0)
-                beta_1 = beta_min + (beta_base - beta_min) * scale  # shape == p.shape
+                if response_mode == "distrust":
+                    # Original Adam-NV rule: high score -> lower beta_1.
+                    scale = torch.clamp(1.0 - gamma * rho, min=0.0)
+                    beta_1 = beta_min + (beta_base - beta_min) * scale
+                else:
+                    # Alternative smoothing hypothesis: preserve Adam's 0.9
+                    # low-noise baseline, then increase momentum as the score rises.
+                    scale = torch.clamp(gamma * rho, min=0.0, max=1.0)
+                    beta_1 = beta_base + (beta_max - beta_base) * scale
 
                 # ── STEP 5: Update First and Second Moments ───────────────────
                 # FIX 1: Two-line form avoids ambiguous in-place semantics when
@@ -175,6 +244,15 @@ class AdamNV(Optimizer):
 
                 # v_t = beta_2 * v_{t-1} + (1 - beta_2) * g_t^2
                 v.mul_(beta_2).addcmul_(g, g, value=(1.0 - beta_2))
+
+                # FIX 6: v_noise advances on its own beta_2_noise decay, using
+                # the SAME gradient g, completely independent of v above. This
+                # is the only place v_noise is touched other than Step 1 (read)
+                # and initialization -- it never feeds into m_hat/v_hat/the
+                # parameter update, only back into Step 1 next step.
+                if decoupled:
+                    v_noise = state['v_noise']
+                    v_noise.mul_(beta_2_noise).addcmul_(g, g, value=(1.0 - beta_2_noise))
 
                 # ── STEP 6: Bias Correction ───────────────────────────────────
                 # Because beta_1 varies per step and per element, the standard
@@ -197,7 +275,11 @@ class AdamNV(Optimizer):
                     )
                     self._underflow_warned = True
 
-                m_hat = m / torch.clamp(1.0 - P, min=eps)           # first moment bias-corrected
+                if bias_correction == "running_product":
+                    m_hat = m / torch.clamp(1.0 - P, min=eps)       # first moment bias-corrected
+                else:
+                    # ablation only: standard Adam normalizer, ignores realized beta_1
+                    m_hat = m / (1.0 - beta_base ** t)
                 v_hat = v / (1.0 - beta_2 ** t)        # second moment bias-corrected
 
                 # ── STEP 7: Parameter Update ──────────────────────────────────
@@ -210,6 +292,8 @@ class AdamNV(Optimizer):
                 state['v']   = v
                 state['rho'] = rho
                 state['P']   = P
+                if decoupled:
+                    state['v_noise'] = v_noise
 
         return loss
 
@@ -227,13 +311,19 @@ class AdamNV(Optimizer):
         for group in self.param_groups:
             beta_base = group['beta_base']
             beta_min  = group['beta_min']
+            beta_max  = group['beta_max']
+            response_mode = group['response_mode']
             gamma     = group['gamma']
             for p in group['params']:
                 state = self.state[p]
                 if not state:
                     continue
-                scale  = torch.clamp(1.0 - gamma * state['rho'], min=0.0)
-                beta_1 = beta_min + (beta_base - beta_min) * scale
+                if response_mode == "distrust":
+                    scale = torch.clamp(1.0 - gamma * state['rho'], min=0.0)
+                    beta_1 = beta_min + (beta_base - beta_min) * scale
+                else:
+                    scale = torch.clamp(gamma * state['rho'], min=0.0, max=1.0)
+                    beta_1 = beta_base + (beta_max - beta_base) * scale
                 all_beta1.append(beta_1.mean().item())
         if not all_beta1:
             return None, None, None
@@ -246,20 +336,26 @@ class AdamNV(Optimizer):
     def get_sigma2_stats(self):
         """
         Returns (mean, min, max) of the current per-element sigma^2 heuristic.
-        Should stay in [0, 1] by construction. Use to verify noise signal
+        Should stay in [0, 1] by construction. Use to verify the heuristic
         is active and not collapsing to 0 or saturating at 1.
+
+        FIX 6: uses v_noise (not v) when beta_2_noise is set, matching
+        what step() actually feeds into the noise signal -- otherwise this
+        diagnostic would silently report the wrong second moment.
         """
         all_sigma2 = []
         for group in self.param_groups:
             lam = group['lam']
             eps = group['eps']
+            decoupled = group['beta_2_noise'] is not None
             for p in group['params']:
                 state = self.state[p]
                 if not state:
                     continue
-                m, v   = state['m'], state['v']
-                num    = torch.clamp(v - m.pow(2), min=0.0)
-                denom  = v + lam * m.abs() + eps
+                m = state['m']
+                v_for_noise = state['v_noise'] if decoupled else state['v']
+                num    = torch.clamp(v_for_noise - m.pow(2), min=0.0)
+                denom  = v_for_noise + lam * m.abs() + eps
                 all_sigma2.append((num / denom).mean().item())
         if not all_sigma2:
             return None, None, None

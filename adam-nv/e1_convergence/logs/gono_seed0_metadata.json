@@ -1,0 +1,48 @@
+{
+  "arguments": {
+    "batch_size": 128,
+    "data_dir": "/kaggle/working/Adam-NV/data",
+    "deterministic": true,
+    "epochs": 60,
+    "log_dir": "/kaggle/working/Adam-NV/logs",
+    "lr": null,
+    "optimizer": "gono",
+    "seed": 0,
+    "smoke_test": false,
+    "synthetic_data": false
+  },
+  "code_sha256": {
+    "adam_nv.py": "96971286705021d895354c25b8b4d8066e24e15291c5c6300be6d5b263de95ba",
+    "experiment_metadata.py": "92864b0412d8af77f77deba7b41e481bff0a6995df6005b3843e31628846ef12",
+    "gono.py": "82665f3c0bed1f5e9a24e574511a213d03f156acd313ef858fe5a55b8a2a28a8",
+    "train_resnet.py": "7b5134fd2472144a2f02d1d030d42753ccf7dc15030d7625a3e93fced58ca1cb"
+  },
+  "command": [
+    "/usr/bin/python3",
+    "train_resnet.py",
+    "--optimizer",
+    "gono",
+    "--seed",
+    "0",
+    "--epochs",
+    "60",
+    "--batch-size",
+    "128",
+    "--data-dir",
+    "/kaggle/working/Adam-NV/data",
+    "--log-dir",
+    "/kaggle/working/Adam-NV/logs",
+    "--deterministic"
+  ],
+  "cuda_available": true,
+  "cuda_runtime": "12.8",
+  "gpu_devices": [
+    "Tesla T4"
+  ],
+  "hostname": "5dd68dfd9af3",
+  "platform": "Linux-6.18.48+-x86_64-with-glibc2.35",
+  "python_version": "3.12.13",
+  "script_version": "e1_train_resnet_v2",
+  "torch_version": "2.10.0+cu128",
+  "torchvision_version": "0.25.0+cu128"
+}

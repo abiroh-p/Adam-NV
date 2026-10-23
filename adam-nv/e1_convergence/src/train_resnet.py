@@ -11,6 +11,7 @@ Usage:
     python train_resnet.py --optimizer adam     --seed 0 --epochs 60
     python train_resnet.py --optimizer adamw    --seed 0 --epochs 60
     python train_resnet.py --optimizer adabelief --seed 0 --epochs 60
+    python train_resnet.py --optimizer gono --seed 0 --epochs 60   # Protocol v2 baseline
 
 Quick smoke test (tiny, CPU-friendly, ~1 minute):
     python train_resnet.py --optimizer adam_nv --seed 0 --epochs 1 \
@@ -28,6 +29,7 @@ import torchvision
 import torchvision.transforms as transforms
 
 from adam_nv import AdamNV
+from gono import GONO
 from experiment_metadata import write_metadata
 
 # ──────────────────────────────────────────────────────────────────────────
@@ -40,8 +42,33 @@ def build_optimizer(name, params, lr):
     name = name.lower()
     if name == "adam_nv":
         return AdamNV(params, lr=lr)
+    elif name == "gono":
+        # Protocol v2 baseline (arXiv:2605.06575). Per-tensor cosine, i.e. the
+        # scope used by the authors' released code. Hyperparameters are the
+        # GONO paper defaults: lam=0.4, beta1 in [0.5, 0.99], beta1_base=0.9.
+        return GONO(params, lr=lr, cosine_scope="tensor")
+    elif name == "gono_exact":
+        # ABLATION (Protocol v2, Exp. 3): GONO with Adam-NV's exact running-product
+        # bias correction instead of the base-beta1 correction of the paper.
+        return GONO(params, lr=lr, cosine_scope="tensor", bias_correction="exact")
+    elif name == "adam_nv_basecorr":
+        # ABLATION (Protocol v2, Exp. 3): Adam-NV with the standard base-beta1 normalizer.
+        return AdamNV(params, lr=lr, bias_correction="base")
+    elif name == "gono_global":
+        # Same optimizer with ONE cosine over the whole gradient vector
+        # (literal reading of the paper's Algorithm 1). Ablation only.
+        return GONO(params, lr=lr, cosine_scope="global")
     elif name == "adam":
         return torch.optim.Adam(params, lr=lr, betas=(0.9, 0.999), eps=1e-8)
+    elif name == "adam_b083":
+        # CONTROL (Protocol v2, Exp. 6): plain Adam with a CONSTANT beta1 equal to the
+        # time-averaged beta1 that Adam-NV's controller produced at lr=3e-3 in Exp. 5
+        # (0.829 averaged over epochs and seeds). Isolates "lower beta1" from "noise-aware beta1".
+        return torch.optim.Adam(params, lr=lr, betas=(0.83, 0.999), eps=1e-8)
+    elif name == "adam_b080":
+        # CONTROL (Protocol v2, Exp. 6): same, with beta1=0.80, to check the result is not
+        # specific to one lucky value.
+        return torch.optim.Adam(params, lr=lr, betas=(0.80, 0.999), eps=1e-8)
     elif name == "adamw":
         return torch.optim.AdamW(params, lr=lr, betas=(0.9, 0.999), eps=1e-8,
                                   weight_decay=1e-4)
@@ -66,6 +93,12 @@ DEFAULT_LR = {
     "adam":      1e-3,
     "adamw":     1e-3,
     "adabelief": 1e-3,
+    "gono":        1e-3,
+    "gono_global": 1e-3,
+    "gono_exact":  1e-3,
+    "adam_nv_basecorr": 1e-3,
+    "adam_b083": 1e-3,
+    "adam_b080": 1e-3,
 }
 
 
@@ -155,10 +188,15 @@ def evaluate(model, loader, loss_fn, device):
 def main():
     parser = argparse.ArgumentParser(description="E1 Convergence Benchmark — single run")
     parser.add_argument("--optimizer", required=True,
-                         choices=["adam_nv", "adam", "adamw", "adabelief"])
+                         choices=["adam_nv", "adam", "adamw", "adabelief", "gono", "gono_global",
+                                 "gono_exact", "adam_nv_basecorr",
+                                 "adam_b083", "adam_b080"])
     parser.add_argument("--seed", type=int, required=True)
     parser.add_argument("--epochs", type=int, default=60)
     parser.add_argument("--batch-size", type=int, default=128)
+    parser.add_argument("--run-tag", type=str, default="",
+                        help="Suffix appended to the optimizer name in the run/file name, "
+                             "e.g. _lr3e-4 for learning-rate sensitivity runs. Default: none.")
     parser.add_argument("--lr", type=float, default=None,
                          help="Override default LR for this optimizer")
     parser.add_argument("--data-dir", type=str, default="./data")
@@ -205,18 +243,24 @@ def main():
     loss_fn = nn.CrossEntropyLoss()
 
     os.makedirs(args.log_dir, exist_ok=True)
-    run_name = f"{args.optimizer}_seed{args.seed}" + ("_smoke" if args.smoke_test else "")
+    run_name = f"{args.optimizer}{args.run_tag}_seed{args.seed}" + ("_smoke" if args.smoke_test else "")
     log_path = os.path.join(args.log_dir, f"{run_name}.csv")
-    metadata_path = write_metadata(log_path, vars(args), "e1_train_resnet")
+    metadata_path = write_metadata(log_path, vars(args), "e1_train_resnet_v2")
     print(f"[E1] Metadata: {metadata_path}")
 
-    is_adam_nv = args.optimizer == "adam_nv"
+    is_adam_nv = args.optimizer in ("adam_nv", "adam_nv_basecorr")
+    is_gono = args.optimizer in ("gono", "gono_global", "gono_exact")
     fieldnames = ["epoch", "train_loss", "train_acc", "val_loss", "val_acc",
                   "lr", "epoch_time_sec"]
     if is_adam_nv:
         fieldnames += ["beta1_mean", "beta1_min", "beta1_max",
                         "sigma2_mean", "sigma2_min", "sigma2_max",
                         "P_mean", "P_min", "P_max"]
+    if is_gono:
+        # beta1_* / cc_* are statistics over parameter TENSORS (one scalar
+        # per tensor in "tensor" scope), not over elements as for Adam-NV.
+        fieldnames += ["beta1_mean", "beta1_min", "beta1_max",
+                        "cc_mean", "cc_min", "cc_max"]
 
     reached_90 = None  # epoch at which val_acc first reaches 90% (CIFAR-10)
 
@@ -271,6 +315,13 @@ def main():
                     "beta1_mean": b_mean, "beta1_min": b_min, "beta1_max": b_max,
                     "sigma2_mean": s_mean, "sigma2_min": s_min, "sigma2_max": s_max,
                     "P_mean": p_mean, "P_min": p_min, "P_max": p_max,
+                })
+            if is_gono:
+                b_mean, b_min, b_max = optimizer.get_beta1_stats()
+                c_mean, c_min, c_max = optimizer.get_cc_stats()
+                row.update({
+                    "beta1_mean": b_mean, "beta1_min": b_min, "beta1_max": b_max,
+                    "cc_mean": c_mean, "cc_min": c_min, "cc_max": c_max,
                 })
 
             writer.writerow(row)

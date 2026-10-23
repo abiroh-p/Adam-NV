@@ -1,0 +1,203 @@
+[E1] optimizer=adam seed=4 epochs=60 lr=0.001 device=cuda smoke_test=False
+[E1] Metadata: /kaggle/working/Adam-NV/logs/adam_seed4_metadata.json
+[adam_seed4] epoch   1/60 | train_loss=1.3943 train_acc=0.4889 | val_loss=1.1989 val_acc=0.5834 | 41.1s/epoch
+[adam_seed4] epoch   2/60 | train_loss=0.9033 train_acc=0.6790 | val_loss=0.9986 val_acc=0.6706 | 41.4s/epoch
+[adam_seed4] epoch   3/60 | train_loss=0.6904 train_acc=0.7595 | val_loss=0.7094 val_acc=0.7608 | 42.7s/epoch
+[adam_seed4] epoch   4/60 | train_loss=0.5756 train_acc=0.8011 | val_loss=0.6599 val_acc=0.7795 | 43.3s/epoch
+[adam_seed4] epoch   5/60 | train_loss=0.5008 train_acc=0.8270 | val_loss=0.5524 val_acc=0.8126 | 44.1s/epoch
+[adam_seed4] epoch   6/60 | train_loss=0.4488 train_acc=0.8442 | val_loss=0.4972 val_acc=0.8274 | 44.5s/epoch
+[adam_seed4] epoch   7/60 | train_loss=0.4015 train_acc=0.8603 | val_loss=0.4477 val_acc=0.8525 | 45.1s/epoch
+[adam_seed4] epoch   8/60 | train_loss=0.3631 train_acc=0.8732 | val_loss=0.4385 val_acc=0.8543 | 45.3s/epoch
+[adam_seed4] epoch   9/60 | train_loss=0.3276 train_acc=0.8870 | val_loss=0.3983 val_acc=0.8706 | 45.5s/epoch
+[adam_seed4] epoch  10/60 | train_loss=0.3025 train_acc=0.8946 | val_loss=0.4273 val_acc=0.8637 | 45.6s/epoch
+[adam_seed4] epoch  11/60 | train_loss=0.2768 train_acc=0.9039 | val_loss=0.4544 val_acc=0.8524 | 45.9s/epoch
+[adam_seed4] epoch  12/60 | train_loss=0.2568 train_acc=0.9108 | val_loss=0.4041 val_acc=0.8739 | 45.8s/epoch
+[adam_seed4] epoch  13/60 | train_loss=0.2377 train_acc=0.9183 | val_loss=0.3727 val_acc=0.8830 | 45.7s/epoch
+[adam_seed4] epoch  14/60 | train_loss=0.2170 train_acc=0.9241 | val_loss=0.3837 val_acc=0.8790 | 46.0s/epoch
+[adam_seed4] epoch  15/60 | train_loss=0.1966 train_acc=0.9327 | val_loss=0.3937 val_acc=0.8779 | 46.1s/epoch
+[adam_seed4] epoch  16/60 | train_loss=0.1833 train_acc=0.9354 | val_loss=0.3910 val_acc=0.8846 | 46.0s/epoch
+[adam_seed4] epoch  17/60 | train_loss=0.1727 train_acc=0.9398 | val_loss=0.3525 val_acc=0.8997 | 45.9s/epoch
+[adam_seed4] epoch  18/60 | train_loss=0.1541 train_acc=0.9460 | val_loss=0.3256 val_acc=0.9018 | 46.1s/epoch
+[adam_seed4] epoch  19/60 | train_loss=0.1407 train_acc=0.9511 | val_loss=0.3653 val_acc=0.8969 | 45.8s/epoch
+[adam_seed4] epoch  20/60 | train_loss=0.1280 train_acc=0.9549 | val_loss=0.3849 val_acc=0.8967 | 45.8s/epoch
+[adam_seed4] epoch  21/60 | train_loss=0.1203 train_acc=0.9580 | val_loss=0.3813 val_acc=0.8991 | 46.0s/epoch
+[adam_seed4] epoch  22/60 | train_loss=0.1075 train_acc=0.9628 | val_loss=0.3471 val_acc=0.9086 | 45.8s/epoch
+[adam_seed4] epoch  23/60 | train_loss=0.0983 train_acc=0.9654 | val_loss=0.3648 val_acc=0.9045 | 45.6s/epoch
+[adam_seed4] epoch  24/60 | train_loss=0.0923 train_acc=0.9684 | val_loss=0.3552 val_acc=0.9085 | 45.7s/epoch
+[adam_seed4] epoch  25/60 | train_loss=0.0799 train_acc=0.9720 | val_loss=0.3737 val_acc=0.9061 | 46.0s/epoch
+[adam_seed4] epoch  26/60 | train_loss=0.0739 train_acc=0.9742 | val_loss=0.3712 val_acc=0.9070 | 46.1s/epoch
+[adam_seed4] epoch  27/60 | train_loss=0.0685 train_acc=0.9753 | val_loss=0.3683 val_acc=0.9081 | 46.0s/epoch
+[adam_seed4] epoch  28/60 | train_loss=0.0580 train_acc=0.9797 | val_loss=0.3988 val_acc=0.9096 | 45.8s/epoch
+[adam_seed4] epoch  29/60 | train_loss=0.0580 train_acc=0.9798 | val_loss=0.3638 val_acc=0.9119 | 45.8s/epoch
+[adam_seed4] epoch  30/60 | train_loss=0.0480 train_acc=0.9825 | val_loss=0.3876 val_acc=0.9167 | 45.8s/epoch
+[adam_seed4] epoch  31/60 | train_loss=0.0473 train_acc=0.9833 | val_loss=0.3697 val_acc=0.9145 | 46.1s/epoch
+[adam_seed4] epoch  32/60 | train_loss=0.0377 train_acc=0.9872 | val_loss=0.4150 val_acc=0.9121 | 45.9s/epoch
+[adam_seed4] epoch  33/60 | train_loss=0.0367 train_acc=0.9866 | val_loss=0.3835 val_acc=0.9137 | 45.9s/epoch
+[adam_seed4] epoch  34/60 | train_loss=0.0321 train_acc=0.9886 | val_loss=0.4112 val_acc=0.9163 | 45.9s/epoch
+[adam_seed4] epoch  35/60 | train_loss=0.0284 train_acc=0.9900 | val_loss=0.3975 val_acc=0.9192 | 45.9s/epoch
+[adam_seed4] epoch  36/60 | train_loss=0.0256 train_acc=0.9913 | val_loss=0.3862 val_acc=0.9195 | 45.9s/epoch
+[adam_seed4] epoch  37/60 | train_loss=0.0215 train_acc=0.9926 | val_loss=0.3821 val_acc=0.9243 | 45.9s/epoch
+[adam_seed4] epoch  38/60 | train_loss=0.0192 train_acc=0.9933 | val_loss=0.3969 val_acc=0.9199 | 45.9s/epoch
+[adam_seed4] epoch  39/60 | train_loss=0.0168 train_acc=0.9942 | val_loss=0.4214 val_acc=0.9220 | 45.9s/epoch
+[adam_seed4] epoch  40/60 | train_loss=0.0158 train_acc=0.9945 | val_loss=0.4073 val_acc=0.9241 | 45.9s/epoch
+[adam_seed4] epoch  41/60 | train_loss=0.0156 train_acc=0.9945 | val_loss=0.4349 val_acc=0.9220 | 46.0s/epoch
+[adam_seed4] epoch  42/60 | train_loss=0.0130 train_acc=0.9956 | val_loss=0.4009 val_acc=0.9236 | 46.0s/epoch
+[adam_seed4] epoch  43/60 | train_loss=0.0097 train_acc=0.9969 | val_loss=0.4126 val_acc=0.9238 | 45.9s/epoch
+[adam_seed4] epoch  44/60 | train_loss=0.0091 train_acc=0.9969 | val_loss=0.4081 val_acc=0.9245 | 45.9s/epoch
+[adam_seed4] epoch  45/60 | train_loss=0.0078 train_acc=0.9975 | val_loss=0.4035 val_acc=0.9272 | 46.0s/epoch
+[adam_seed4] epoch  46/60 | train_loss=0.0076 train_acc=0.9974 | val_loss=0.4005 val_acc=0.9287 | 46.0s/epoch
+[adam_seed4] epoch  47/60 | train_loss=0.0057 train_acc=0.9982 | val_loss=0.4045 val_acc=0.9276 | 45.9s/epoch
+[adam_seed4] epoch  48/60 | train_loss=0.0042 train_acc=0.9987 | val_loss=0.4071 val_acc=0.9280 | 45.7s/epoch
+[adam_seed4] epoch  49/60 | train_loss=0.0042 train_acc=0.9987 | val_loss=0.4116 val_acc=0.9297 | 45.7s/epoch
+[adam_seed4] epoch  50/60 | train_loss=0.0037 train_acc=0.9988 | val_loss=0.4185 val_acc=0.9301 | 45.8s/epoch
+[adam_seed4] epoch  51/60 | train_loss=0.0034 train_acc=0.9991 | val_loss=0.4116 val_acc=0.9306 | 46.0s/epoch
+[adam_seed4] epoch  52/60 | train_loss=0.0026 train_acc=0.9994 | val_loss=0.4231 val_acc=0.9294 | 46.0s/epoch
+[adam_seed4] epoch  53/60 | train_loss=0.0028 train_acc=0.9991 | val_loss=0.4196 val_acc=0.9300 | 46.0s/epoch
+[adam_seed4] epoch  54/60 | train_loss=0.0023 train_acc=0.9994 | val_loss=0.4239 val_acc=0.9301 | 46.1s/epoch
+[adam_seed4] epoch  55/60 | train_loss=0.0020 train_acc=0.9995 | val_loss=0.4224 val_acc=0.9299 | 46.0s/epoch
+[adam_seed4] epoch  56/60 | train_loss=0.0023 train_acc=0.9992 | val_loss=0.4202 val_acc=0.9302 | 46.0s/epoch
+[adam_seed4] epoch  57/60 | train_loss=0.0017 train_acc=0.9994 | val_loss=0.4208 val_acc=0.9303 | 46.0s/epoch
+[adam_seed4] epoch  58/60 | train_loss=0.0022 train_acc=0.9992 | val_loss=0.4190 val_acc=0.9312 | 46.0s/epoch
+[adam_seed4] epoch  59/60 | train_loss=0.0017 train_acc=0.9996 | val_loss=0.4216 val_acc=0.9298 | 45.9s/epoch
+[adam_seed4] epoch  60/60 | train_loss=0.0015 train_acc=0.9996 | val_loss=0.4177 val_acc=0.9311 | 46.0s/epoch
+[E1] DONE — adam_seed4. Log saved to /kaggle/working/Adam-NV/logs/adam_seed4.csv
+[E1] Reached 90% val acc at epoch 18
+[E1] optimizer=adam seed=5 epochs=60 lr=0.001 device=cuda smoke_test=False
+[E1] Metadata: /kaggle/working/Adam-NV/logs/adam_seed5_metadata.json
+[adam_seed5] epoch   1/60 | train_loss=1.3518 train_acc=0.5091 | val_loss=1.1304 val_acc=0.6115 | 45.6s/epoch
+[adam_seed5] epoch   2/60 | train_loss=0.8586 train_acc=0.6965 | val_loss=0.7573 val_acc=0.7444 | 46.8s/epoch
+[adam_seed5] epoch   3/60 | train_loss=0.6609 train_acc=0.7693 | val_loss=0.6583 val_acc=0.7760 | 46.1s/epoch
+[adam_seed5] epoch   4/60 | train_loss=0.5651 train_acc=0.8046 | val_loss=0.5517 val_acc=0.8102 | 46.0s/epoch
+[adam_seed5] epoch   5/60 | train_loss=0.4913 train_acc=0.8316 | val_loss=0.6283 val_acc=0.7941 | 46.3s/epoch
+[adam_seed5] epoch   6/60 | train_loss=0.4426 train_acc=0.8459 | val_loss=0.5406 val_acc=0.8238 | 45.9s/epoch
+[adam_seed5] epoch   7/60 | train_loss=0.3991 train_acc=0.8637 | val_loss=0.5121 val_acc=0.8358 | 45.8s/epoch
+[adam_seed5] epoch   8/60 | train_loss=0.3632 train_acc=0.8761 | val_loss=0.5073 val_acc=0.8374 | 46.2s/epoch
+[adam_seed5] epoch   9/60 | train_loss=0.3320 train_acc=0.8864 | val_loss=0.4153 val_acc=0.8625 | 46.1s/epoch
+[adam_seed5] epoch  10/60 | train_loss=0.3067 train_acc=0.8944 | val_loss=0.4099 val_acc=0.8656 | 46.1s/epoch
+[adam_seed5] epoch  11/60 | train_loss=0.2786 train_acc=0.9046 | val_loss=0.4027 val_acc=0.8733 | 46.1s/epoch
+[adam_seed5] epoch  12/60 | train_loss=0.2542 train_acc=0.9114 | val_loss=0.4298 val_acc=0.8660 | 46.1s/epoch
+[adam_seed5] epoch  13/60 | train_loss=0.2392 train_acc=0.9174 | val_loss=0.3426 val_acc=0.8891 | 46.1s/epoch
+[adam_seed5] epoch  14/60 | train_loss=0.2187 train_acc=0.9239 | val_loss=0.3501 val_acc=0.8891 | 46.2s/epoch
+[adam_seed5] epoch  15/60 | train_loss=0.2004 train_acc=0.9314 | val_loss=0.3737 val_acc=0.8836 | 46.1s/epoch
+[adam_seed5] epoch  16/60 | train_loss=0.1839 train_acc=0.9357 | val_loss=0.3520 val_acc=0.8920 | 46.1s/epoch
+[adam_seed5] epoch  17/60 | train_loss=0.1714 train_acc=0.9393 | val_loss=0.4234 val_acc=0.8787 | 46.0s/epoch
+[adam_seed5] epoch  18/60 | train_loss=0.1563 train_acc=0.9451 | val_loss=0.3885 val_acc=0.8884 | 45.9s/epoch
+[adam_seed5] epoch  19/60 | train_loss=0.1450 train_acc=0.9479 | val_loss=0.3618 val_acc=0.8945 | 45.9s/epoch
+[adam_seed5] epoch  20/60 | train_loss=0.1302 train_acc=0.9537 | val_loss=0.3411 val_acc=0.9001 | 45.9s/epoch
+[adam_seed5] epoch  21/60 | train_loss=0.1181 train_acc=0.9587 | val_loss=0.3944 val_acc=0.8955 | 45.8s/epoch
+[adam_seed5] epoch  22/60 | train_loss=0.1115 train_acc=0.9606 | val_loss=0.3398 val_acc=0.9061 | 45.9s/epoch
+[adam_seed5] epoch  23/60 | train_loss=0.0983 train_acc=0.9650 | val_loss=0.3445 val_acc=0.9044 | 45.9s/epoch
+[adam_seed5] epoch  24/60 | train_loss=0.0915 train_acc=0.9676 | val_loss=0.3515 val_acc=0.9095 | 45.9s/epoch
+[adam_seed5] epoch  25/60 | train_loss=0.0799 train_acc=0.9719 | val_loss=0.3731 val_acc=0.9068 | 45.9s/epoch
+[adam_seed5] epoch  26/60 | train_loss=0.0781 train_acc=0.9722 | val_loss=0.3558 val_acc=0.9069 | 45.8s/epoch
+[adam_seed5] epoch  27/60 | train_loss=0.0655 train_acc=0.9768 | val_loss=0.3744 val_acc=0.9110 | 45.9s/epoch
+[adam_seed5] epoch  28/60 | train_loss=0.0652 train_acc=0.9772 | val_loss=0.3905 val_acc=0.9081 | 45.9s/epoch
+[adam_seed5] epoch  29/60 | train_loss=0.0541 train_acc=0.9811 | val_loss=0.3845 val_acc=0.9114 | 45.9s/epoch
+[adam_seed5] epoch  30/60 | train_loss=0.0522 train_acc=0.9816 | val_loss=0.3542 val_acc=0.9169 | 46.0s/epoch
+[adam_seed5] epoch  31/60 | train_loss=0.0473 train_acc=0.9831 | val_loss=0.3636 val_acc=0.9193 | 46.0s/epoch
+[adam_seed5] epoch  32/60 | train_loss=0.0410 train_acc=0.9854 | val_loss=0.3872 val_acc=0.9139 | 45.9s/epoch
+[adam_seed5] epoch  33/60 | train_loss=0.0386 train_acc=0.9864 | val_loss=0.3780 val_acc=0.9186 | 45.9s/epoch
+[adam_seed5] epoch  34/60 | train_loss=0.0343 train_acc=0.9885 | val_loss=0.3905 val_acc=0.9179 | 45.9s/epoch
+[adam_seed5] epoch  35/60 | train_loss=0.0276 train_acc=0.9906 | val_loss=0.3810 val_acc=0.9214 | 46.0s/epoch
+[adam_seed5] epoch  36/60 | train_loss=0.0232 train_acc=0.9920 | val_loss=0.3757 val_acc=0.9242 | 46.0s/epoch
+[adam_seed5] epoch  37/60 | train_loss=0.0238 train_acc=0.9922 | val_loss=0.3869 val_acc=0.9258 | 45.9s/epoch
+[adam_seed5] epoch  38/60 | train_loss=0.0205 train_acc=0.9925 | val_loss=0.4059 val_acc=0.9229 | 46.0s/epoch
+[adam_seed5] epoch  39/60 | train_loss=0.0198 train_acc=0.9934 | val_loss=0.4148 val_acc=0.9230 | 46.1s/epoch
+[adam_seed5] epoch  40/60 | train_loss=0.0167 train_acc=0.9941 | val_loss=0.3971 val_acc=0.9251 | 45.7s/epoch
+[adam_seed5] epoch  41/60 | train_loss=0.0140 train_acc=0.9951 | val_loss=0.4148 val_acc=0.9269 | 45.7s/epoch
+[adam_seed5] epoch  42/60 | train_loss=0.0120 train_acc=0.9956 | val_loss=0.4035 val_acc=0.9259 | 45.7s/epoch
+[adam_seed5] epoch  43/60 | train_loss=0.0105 train_acc=0.9967 | val_loss=0.4052 val_acc=0.9278 | 45.7s/epoch
+[adam_seed5] epoch  44/60 | train_loss=0.0085 train_acc=0.9972 | val_loss=0.4116 val_acc=0.9280 | 45.8s/epoch
+[adam_seed5] epoch  45/60 | train_loss=0.0082 train_acc=0.9973 | val_loss=0.4165 val_acc=0.9277 | 46.1s/epoch
+[adam_seed5] epoch  46/60 | train_loss=0.0076 train_acc=0.9976 | val_loss=0.4058 val_acc=0.9288 | 46.2s/epoch
+[adam_seed5] epoch  47/60 | train_loss=0.0055 train_acc=0.9983 | val_loss=0.4076 val_acc=0.9283 | 46.1s/epoch
+[adam_seed5] epoch  48/60 | train_loss=0.0053 train_acc=0.9983 | val_loss=0.4212 val_acc=0.9299 | 46.0s/epoch
+[adam_seed5] epoch  49/60 | train_loss=0.0048 train_acc=0.9984 | val_loss=0.4177 val_acc=0.9303 | 46.1s/epoch
+[adam_seed5] epoch  50/60 | train_loss=0.0036 train_acc=0.9989 | val_loss=0.4111 val_acc=0.9308 | 45.9s/epoch
+[adam_seed5] epoch  51/60 | train_loss=0.0029 train_acc=0.9993 | val_loss=0.4205 val_acc=0.9304 | 45.9s/epoch
+[adam_seed5] epoch  52/60 | train_loss=0.0036 train_acc=0.9989 | val_loss=0.4175 val_acc=0.9309 | 46.1s/epoch
+[adam_seed5] epoch  53/60 | train_loss=0.0029 train_acc=0.9991 | val_loss=0.4178 val_acc=0.9317 | 46.1s/epoch
+[adam_seed5] epoch  54/60 | train_loss=0.0028 train_acc=0.9992 | val_loss=0.4218 val_acc=0.9308 | 46.0s/epoch
+[adam_seed5] epoch  55/60 | train_loss=0.0022 train_acc=0.9993 | val_loss=0.4182 val_acc=0.9323 | 46.0s/epoch
+[adam_seed5] epoch  56/60 | train_loss=0.0023 train_acc=0.9993 | val_loss=0.4194 val_acc=0.9310 | 46.0s/epoch
+[adam_seed5] epoch  57/60 | train_loss=0.0018 train_acc=0.9995 | val_loss=0.4168 val_acc=0.9318 | 46.1s/epoch
+[adam_seed5] epoch  58/60 | train_loss=0.0018 train_acc=0.9995 | val_loss=0.4126 val_acc=0.9317 | 45.7s/epoch
+[adam_seed5] epoch  59/60 | train_loss=0.0019 train_acc=0.9995 | val_loss=0.4176 val_acc=0.9320 | 45.8s/epoch
+[adam_seed5] epoch  60/60 | train_loss=0.0019 train_acc=0.9995 | val_loss=0.4157 val_acc=0.9318 | 46.0s/epoch
+[E1] DONE — adam_seed5. Log saved to /kaggle/working/Adam-NV/logs/adam_seed5.csv
+[E1] Reached 90% val acc at epoch 20
+[E1] optimizer=adam seed=6 epochs=60 lr=0.001 device=cuda smoke_test=False
+[E1] Metadata: /kaggle/working/Adam-NV/logs/adam_seed6_metadata.json
+[adam_seed6] epoch   1/60 | train_loss=1.3516 train_acc=0.5069 | val_loss=1.2190 val_acc=0.6103 | 45.5s/epoch
+[adam_seed6] epoch   2/60 | train_loss=0.8875 train_acc=0.6837 | val_loss=0.7874 val_acc=0.7346 | 47.1s/epoch
+[adam_seed6] epoch   3/60 | train_loss=0.6973 train_acc=0.7568 | val_loss=0.6847 val_acc=0.7655 | 45.8s/epoch
+[adam_seed6] epoch   4/60 | train_loss=0.5882 train_acc=0.7949 | val_loss=0.5806 val_acc=0.8045 | 46.2s/epoch
+[adam_seed6] epoch   5/60 | train_loss=0.5076 train_acc=0.8242 | val_loss=0.6309 val_acc=0.7981 | 46.2s/epoch
+[adam_seed6] epoch   6/60 | train_loss=0.4473 train_acc=0.8454 | val_loss=0.5150 val_acc=0.8340 | 46.0s/epoch
+[adam_seed6] epoch   7/60 | train_loss=0.4015 train_acc=0.8609 | val_loss=0.4735 val_acc=0.8443 | 45.8s/epoch
+[adam_seed6] epoch   8/60 | train_loss=0.3676 train_acc=0.8736 | val_loss=0.5237 val_acc=0.8297 | 45.8s/epoch
+[adam_seed6] epoch   9/60 | train_loss=0.3340 train_acc=0.8837 | val_loss=0.4946 val_acc=0.8409 | 45.9s/epoch
+[adam_seed6] epoch  10/60 | train_loss=0.3031 train_acc=0.8941 | val_loss=0.4044 val_acc=0.8645 | 45.9s/epoch
+[adam_seed6] epoch  11/60 | train_loss=0.2775 train_acc=0.9047 | val_loss=0.4094 val_acc=0.8685 | 45.9s/epoch
+[adam_seed6] epoch  12/60 | train_loss=0.2606 train_acc=0.9092 | val_loss=0.4210 val_acc=0.8618 | 45.9s/epoch
+[adam_seed6] epoch  13/60 | train_loss=0.2391 train_acc=0.9167 | val_loss=0.4051 val_acc=0.8711 | 46.1s/epoch
+[adam_seed6] epoch  14/60 | train_loss=0.2230 train_acc=0.9219 | val_loss=0.3821 val_acc=0.8784 | 45.9s/epoch
+[adam_seed6] epoch  15/60 | train_loss=0.1973 train_acc=0.9306 | val_loss=0.3589 val_acc=0.8913 | 45.9s/epoch
+[adam_seed6] epoch  16/60 | train_loss=0.1875 train_acc=0.9342 | val_loss=0.3240 val_acc=0.8981 | 45.8s/epoch
+[adam_seed6] epoch  17/60 | train_loss=0.1729 train_acc=0.9396 | val_loss=0.3424 val_acc=0.8957 | 45.8s/epoch
+[adam_seed6] epoch  18/60 | train_loss=0.1550 train_acc=0.9454 | val_loss=0.3209 val_acc=0.9021 | 45.9s/epoch
+[adam_seed6] epoch  19/60 | train_loss=0.1485 train_acc=0.9480 | val_loss=0.3452 val_acc=0.8992 | 45.9s/epoch
+[adam_seed6] epoch  20/60 | train_loss=0.1334 train_acc=0.9537 | val_loss=0.3336 val_acc=0.9043 | 46.2s/epoch
+[adam_seed6] epoch  21/60 | train_loss=0.1213 train_acc=0.9575 | val_loss=0.3344 val_acc=0.9073 | 46.2s/epoch
+[adam_seed6] epoch  22/60 | train_loss=0.1107 train_acc=0.9603 | val_loss=0.3120 val_acc=0.9127 | 46.0s/epoch
+[adam_seed6] epoch  23/60 | train_loss=0.0994 train_acc=0.9655 | val_loss=0.3121 val_acc=0.9168 | 46.1s/epoch
+[adam_seed6] epoch  24/60 | train_loss=0.0928 train_acc=0.9678 | val_loss=0.3864 val_acc=0.9003 | 46.0s/epoch
+[adam_seed6] epoch  25/60 | train_loss=0.0875 train_acc=0.9687 | val_loss=0.3288 val_acc=0.9133 | 45.9s/epoch
+[adam_seed6] epoch  26/60 | train_loss=0.0769 train_acc=0.9735 | val_loss=0.3231 val_acc=0.9166 | 46.1s/epoch
+[adam_seed6] epoch  27/60 | train_loss=0.0689 train_acc=0.9757 | val_loss=0.4200 val_acc=0.8993 | 46.2s/epoch
+[adam_seed6] epoch  28/60 | train_loss=0.0654 train_acc=0.9766 | val_loss=0.3532 val_acc=0.9153 | 45.9s/epoch
+[adam_seed6] epoch  29/60 | train_loss=0.0593 train_acc=0.9792 | val_loss=0.3652 val_acc=0.9129 | 45.7s/epoch
+[adam_seed6] epoch  30/60 | train_loss=0.0516 train_acc=0.9821 | val_loss=0.3686 val_acc=0.9189 | 46.0s/epoch
+[adam_seed6] epoch  31/60 | train_loss=0.0447 train_acc=0.9837 | val_loss=0.4291 val_acc=0.9078 | 46.1s/epoch
+[adam_seed6] epoch  32/60 | train_loss=0.0408 train_acc=0.9859 | val_loss=0.3949 val_acc=0.9129 | 45.8s/epoch
+[adam_seed6] epoch  33/60 | train_loss=0.0380 train_acc=0.9868 | val_loss=0.3923 val_acc=0.9170 | 45.9s/epoch
+[adam_seed6] epoch  34/60 | train_loss=0.0325 train_acc=0.9888 | val_loss=0.3906 val_acc=0.9227 | 46.0s/epoch
+[adam_seed6] epoch  35/60 | train_loss=0.0313 train_acc=0.9892 | val_loss=0.3904 val_acc=0.9231 | 46.2s/epoch
+[adam_seed6] epoch  36/60 | train_loss=0.0267 train_acc=0.9906 | val_loss=0.3901 val_acc=0.9210 | 46.0s/epoch
+[adam_seed6] epoch  37/60 | train_loss=0.0239 train_acc=0.9919 | val_loss=0.4056 val_acc=0.9185 | 45.7s/epoch
+[adam_seed6] epoch  38/60 | train_loss=0.0209 train_acc=0.9932 | val_loss=0.3874 val_acc=0.9229 | 45.9s/epoch
+[adam_seed6] epoch  39/60 | train_loss=0.0182 train_acc=0.9937 | val_loss=0.4050 val_acc=0.9248 | 46.1s/epoch
+[adam_seed6] epoch  40/60 | train_loss=0.0152 train_acc=0.9948 | val_loss=0.4161 val_acc=0.9258 | 46.2s/epoch
+[adam_seed6] epoch  41/60 | train_loss=0.0142 train_acc=0.9951 | val_loss=0.4186 val_acc=0.9238 | 46.1s/epoch
+[adam_seed6] epoch  42/60 | train_loss=0.0124 train_acc=0.9957 | val_loss=0.4146 val_acc=0.9261 | 46.1s/epoch
+[adam_seed6] epoch  43/60 | train_loss=0.0129 train_acc=0.9955 | val_loss=0.4064 val_acc=0.9248 | 46.0s/epoch
+[adam_seed6] epoch  44/60 | train_loss=0.0111 train_acc=0.9961 | val_loss=0.4134 val_acc=0.9242 | 46.1s/epoch
+[adam_seed6] epoch  45/60 | train_loss=0.0084 train_acc=0.9976 | val_loss=0.4270 val_acc=0.9264 | 46.1s/epoch
+[adam_seed6] epoch  46/60 | train_loss=0.0071 train_acc=0.9977 | val_loss=0.4191 val_acc=0.9270 | 46.0s/epoch
+[adam_seed6] epoch  47/60 | train_loss=0.0053 train_acc=0.9984 | val_loss=0.4176 val_acc=0.9284 | 46.2s/epoch
+[adam_seed6] epoch  48/60 | train_loss=0.0055 train_acc=0.9982 | val_loss=0.4203 val_acc=0.9302 | 45.8s/epoch
+[adam_seed6] epoch  49/60 | train_loss=0.0053 train_acc=0.9983 | val_loss=0.4194 val_acc=0.9293 | 45.7s/epoch
+[adam_seed6] epoch  50/60 | train_loss=0.0040 train_acc=0.9988 | val_loss=0.4204 val_acc=0.9305 | 45.8s/epoch
+[adam_seed6] epoch  51/60 | train_loss=0.0037 train_acc=0.9988 | val_loss=0.4309 val_acc=0.9261 | 46.1s/epoch
+[adam_seed6] epoch  52/60 | train_loss=0.0032 train_acc=0.9992 | val_loss=0.4245 val_acc=0.9278 | 46.2s/epoch
+[adam_seed6] epoch  53/60 | train_loss=0.0034 train_acc=0.9991 | val_loss=0.4176 val_acc=0.9292 | 46.0s/epoch
+[adam_seed6] epoch  54/60 | train_loss=0.0026 train_acc=0.9993 | val_loss=0.4193 val_acc=0.9301 | 46.1s/epoch
+[adam_seed6] epoch  55/60 | train_loss=0.0021 train_acc=0.9995 | val_loss=0.4177 val_acc=0.9314 | 45.7s/epoch
+[adam_seed6] epoch  56/60 | train_loss=0.0019 train_acc=0.9995 | val_loss=0.4176 val_acc=0.9314 | 45.9s/epoch
+[adam_seed6] epoch  57/60 | train_loss=0.0018 train_acc=0.9996 | val_loss=0.4172 val_acc=0.9317 | 46.1s/epoch
+[adam_seed6] epoch  58/60 | train_loss=0.0018 train_acc=0.9996 | val_loss=0.4196 val_acc=0.9306 | 46.1s/epoch
+[adam_seed6] epoch  59/60 | train_loss=0.0022 train_acc=0.9994 | val_loss=0.4181 val_acc=0.9316 | 46.1s/epoch
+[adam_seed6] epoch  60/60 | train_loss=0.0018 train_acc=0.9995 | val_loss=0.4216 val_acc=0.9309 | 46.0s/epoch
+[E1] DONE — adam_seed6. Log saved to /kaggle/working/Adam-NV/logs/adam_seed6.csv
+[E1] Reached 90% val acc at epoch 18
+[E1 Suite] 3 runs planned: [('adam', 4), ('adam', 5), ('adam', 6)]
+[E1 Suite] epochs=60 batch_size=128 smoke_test=False synthetic_data=False
+
+[E1 Suite] (1/3) STARTING adam_seed4 | elapsed so far: 0s
+
+[E1 Suite] (2/3) STARTING adam_seed5 | elapsed so far: 2897s
+
+[E1 Suite] (3/3) STARTING adam_seed6 | elapsed so far: 5819s
+
+[E1 Suite] DONE — 3 succeeded, 0 failed, 0 skipped. Total time: 145.7 min
+[E1 Suite] Status table saved to /kaggle/working/Adam-NV/logs/_suite_status_adam_gpu0.csv
